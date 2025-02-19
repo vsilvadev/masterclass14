@@ -23,7 +23,7 @@ void consume(JsonService service) async {
   print(data);
 }
 
-//HttpService class that will implement the fetchJson method usin Http
+//HttpService class that will implement the fetchJson method using Http
 class HttpService implements JsonService {
   @override
   Future<Map> fetchJson() async {
@@ -34,7 +34,7 @@ class HttpService implements JsonService {
   }
 }
 
-//DioService class that will implement the fetchJson method usin Dio
+//DioService class that will implement the fetchJson method using Dio
 class DioService implements JsonService {
   final Dio dio = Dio();
 
