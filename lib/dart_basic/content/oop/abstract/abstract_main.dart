@@ -1,4 +1,4 @@
-import 'package:masterclass/dart_basic/oop/abstract/abstract.dart';
+import 'package:masterclass/dart_basic/content/oop/abstract/abstract.dart';
 
 void main() {
   final vitor = Student('Vitor', lastName: 'Silva');
