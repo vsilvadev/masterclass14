@@ -22,40 +22,65 @@ The result must be equal to the second verification digit.
 */
 
 void main() {
-  final validationResult = validateCPF('252.217.810-50');
+  final Person person = Person(cpf: '252.217.810-50');
+  final Person person2 = Person(cpf: '111.111.111-11');
 
-  validationResult == true ? print('CPF Validates') : print('CPF is not valid');
+  print(person.validateCpf());
+  print(person2.validateCpf());
 }
 
-bool validateCPF(String cpf) {
-  List<int> digitsList = cpf
-      .split('')
-      .where((char) => '0123456789'.contains(char))
-      .map(int.parse)
-      .toList();
+class Person {
+  String cpf;
 
-  final d1 = commomSteps(digitsList.sublist(0, 9));
-  final d1Validation = d1 == digitsList[digitsList.length - 2];
+  Person({required this.cpf});
 
-  final d2 = commomSteps([...digitsList.sublist(0, 9), d1]);
-  final d2Validation = d2 == digitsList[digitsList.length - 1];
+  bool validateCpf() {
+    List<int> digitsList = cpfParse();
+    final isCpfNumberValid = cpfNumberIsValid(digitsList);
 
-  return d1Validation == true && d2Validation == true;
-}
+    if (isCpfNumberValid) {
+      final validationDigit1 = findValidationDigit(digitsList.sublist(0, 9));
+      final d1Validation =
+          validationDigit1 == digitsList[digitsList.length - 2];
 
-int commomSteps(List<int> digitsList) {
-  var multiplyer = 2;
-  final multipliedList = digitsList.reversed
-      .toList()
-      .map((number) {
-        final result = multiplyer * number;
-        multiplyer = multiplyer + 1;
-        return result;
-      })
-      .toList()
-      .reversed
-      .toList();
+      final validationDigit2 =
+          findValidationDigit([...digitsList.sublist(0, 9), validationDigit1]);
+      final d2Validation =
+          validationDigit2 == digitsList[digitsList.length - 1];
 
-  final listSumDivideBy11 = multipliedList.reduce((a, b) => a + b) % 11;
-  return listSumDivideBy11 < 2 ? 0 : 11 - listSumDivideBy11;
+      return d1Validation == true && d2Validation == true;
+    } else {
+      return false;
+    }
+  }
+
+  List<int> cpfParse() {
+    return cpf
+        .split('')
+        .where((char) => '0123456789'.contains(char))
+        .map(int.parse)
+        .toList();
+  }
+
+  bool cpfNumberIsValid(List<int> cpfList) {
+    final cpfListSet = cpfList.toSet();
+    return cpfList.length == 11 && cpfListSet.length != 1;
+  }
+
+  int findValidationDigit(List<int> digitsList) {
+    var multiplyer = 2;
+    final multipliedList = digitsList.reversed
+        .toList()
+        .map((number) {
+          final result = multiplyer * number;
+          multiplyer = multiplyer + 1;
+          return result;
+        })
+        .toList()
+        .reversed
+        .toList();
+
+    final listSumDivideBy11 = multipliedList.reduce((a, b) => a + b) % 11;
+    return listSumDivideBy11 < 2 ? 0 : 11 - listSumDivideBy11;
+  }
 }
