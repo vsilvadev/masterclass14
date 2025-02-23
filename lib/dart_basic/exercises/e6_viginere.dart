@@ -1,63 +1,64 @@
 /*
-Cifra de Vigenère é uma criptografia simples usada para embaralhar textos.
-Valores que não seja letras NÃO SÃO TRANSFORMADOS.
+Vigenère cipher is a simple encryption method used to scramble text.
+Values ​​other than letters ARE NOT TRANSFORMED.
 
-Crie uma classe que execute 3 regras de negócio relacionado a criptografia:
+Create a class that executes 3 business rules related to encryption:
+A - Random Key Generator.
+B - Encode (Return the encrypted text)
+C - Decode (Return the decrypted text).
 
-A - Gerador de Key randômica.
-B - Encode (Retorne o texto criptografado)
-C - Decode (Retorne o texto descriptografado).
+Note: Use only uppercase values. Make sure of that!
 
-Obs: Use apenas valores maiúsculos. Certifique-se disso! 
-
-```
-A. Algorítimo para Key:
-
-Para executar o encode e decode é necessário ter uma chave que tenha valores randômicos
-mas que tenha a mesma quantidade de caracteres do texto a ser criptografado.
+A. Key Algorithm:
+To perform the encode and decode, it is necessary to have a 
+key that has random values but that has the same number
+of characters as the text to be encrypted.
 
 
 B. Encode:
+Step 1: Receive the text to be encrypted and the key in question.
+Step 2: Add the charCode of each letter of the text and the key in their respective
+positions and divide by 26. The REST of this division must be added to the CharCode of the letter A.
+Step 3: The result of the previous addition is the new char.
 
-Passo 1: Receba a o texto a ser criptografado e a chave em questão.
-Passo 2: deve-se somar o charCode de cada letra do texto e da key em suas respectivas
-posições e dividir por 26. O RESTO dessa divisão deve ser somado com o CharCode da letra A.
-Passo 3: O resultado da soma anterior é o novo char.
-Lembre-se: Valores não alfabetos não devem ser transformados.
+Remember: Non-alphabet values ​​should not be transformed.
 
 C. Decode:
-
-Passo 1: Receba a o texto criptografado e a chave.
-Passo 2: deve-se subtrair o charCode de cada letra do texto e da key em suas
-respectivas posições somando o resultado com 26. O resultado deve ser dividido por 26.
-O RESTO dessa divisão deve ser somado com o CharCode da letra A.
-Passo 3: O resultado da soma anterior é o char descriptografado.
+Step 1: Receive the encrypted text and the key.
+Step 2: Subtract the charCode of each letter of the text and the key in 
+their respective positions, adding the result to 26. The result must be divided by 26.
+The REST of this division must be added to the CharCode of the letter A.
+Step 3: The result of the previous addition is the decrypted char.
 */
 
 import 'dart:math';
 
 void main() {
   final text = 'Bom Dia';
-  final cripto = Cripto(text: text);
-  // print(cripto.generateKey());
-  print(cripto.encode(text: text, key: 'QMH FPL'));
-  print(cripto.decode(criptText: 'RAT IXL', key: 'QMH FPL'));
+  final encryption = ViginerEncryption(text: text);
+  print(encryption.encode(text: text, key: 'QMH FPL'));
+  print(encryption.decode(criptText: 'RAT IXL', key: 'QMH FPL'));
 }
 
-class Cripto {
+abstract class Encryption {
+  String generateKey();
+  String encode({required String text, required String key});
+  String decode({required String criptText, required String key});
+}
+
+class ViginerEncryption implements Encryption {
   final String text;
 
-  Cripto({required this.text});
+  ViginerEncryption({required this.text});
 
+  @override
   String generateKey() {
-    //Letra maíscula em tudo
     final upperText = text.toUpperCase();
     final Random random = Random();
 
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     Set<String> charSet = chars.split('').toSet();
 
-    //Se a letra existir no Set eu gero o random
     final key = upperText.split('').map((char) {
       if (charSet.contains(char)) {
         return chars[random.nextInt(chars.length)];
@@ -69,17 +70,8 @@ class Cripto {
     return key;
   }
 
+  @override
   String encode({required String text, required String key}) {
-    /*
-    
-    Passo 1: Receba a o texto a ser criptografado e a chave em questão.
-
-    Passo 2: deve-se somar o charCode de cada letra do texto e da key
-    em suas respectivas posições e dividir por 26. O RESTO dessa divisão deve
-    ser somado com o CharCode da letra A.
-    
-    Passo 3: O resultado da soma anterior é o novo char.
-    */
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     Set<String> charSet = chars.split('').toSet();
 
@@ -108,16 +100,8 @@ class Cripto {
     return encoded;
   }
 
+  @override
   String decode({required String criptText, required String key}) {
-    /*
-    Passo 1: Receba a o texto criptografado e a chave.
-    
-    Passo 2: deve-se subtrair o charCode de cada letra do texto e 
-    da key em suas respectivas posições somando o resultado com 26. 
-    O resultado deve ser dividido por 26. O RESTO dessa divisão deve ser 
-    somado com o CharCode da letra A.
- 
-  */
     var counter = 0;
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     Set<String> charSet = chars.split('').toSet();
@@ -142,10 +126,7 @@ class Cripto {
         return char;
       }
     }).join();
-    /*
 
-    Passo 3: O resultado da soma anterior é o char descriptografado.
-    */
     return encoded;
   }
 }
