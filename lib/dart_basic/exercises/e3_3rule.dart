@@ -42,6 +42,8 @@ double ruleOf3({double? v1, double? v2, double? v3, double? v4}) {
     } else if (v4 == null) {
       result = (v2 * v3) / v1;
     }
+  } else {
+    throw Exception('Only one value can be null');
   }
 
   return result;
