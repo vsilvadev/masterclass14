@@ -1,4 +1,4 @@
-import 'package:masterclass/dart_basic/content/oop/abstract/abstract_main.dart';
+import 'inheritance_main.dart';
 
 class Student {
   String _firstName;

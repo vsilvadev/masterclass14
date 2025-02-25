@@ -1,4 +1,4 @@
-import 'package:masterclass/dart_basic/content/oop/inheritance/inheritance.dart';
+import 'inheritance.dart';
 
 void main() {
   final vitor = Student('Vitor', lastName: 'Silva');

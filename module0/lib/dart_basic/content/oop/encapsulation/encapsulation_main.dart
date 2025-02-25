@@ -1,4 +1,4 @@
-import 'package:masterclass/dart_basic/content/oop/encapsulation/encapsulation.dart';
+import 'encapsulation.dart';
 
 void main() {
   final vitor = Student('Vitor', lastName: 'Silva');
