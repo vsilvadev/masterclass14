@@ -19,38 +19,54 @@ import 'dart:io';
 void main() {
   //Por que o Directory mostra só a pasta raiz do projeto?
   // print(Directory.current);
-  final reader = DotEnvReader();
-  print(reader.getEnvValue('.env', 'DATABASE_URL'));
-  print(reader.getEnvValue('.env', 'IS_ADMIN'));
-  print(reader.getEnvValue('.env', 'REFRESH_TIME'));
+  final env = DotEnvReader(pathFile: '.env');
+
+  final dataBaseUrl = env.getEnvValue('DATABASE_URL');
+  print(dataBaseUrl == 'http://DATABASE');
+
+  final apiToken = env.getEnvValue('IS_ADMIN');
+  print(apiToken == true);
+
+  final expirationToken = env.getEnvValue('REFRESH_TIME');
+  print(expirationToken == 123454);
 }
 
 class DotEnvReader {
-  dynamic getEnvValue(String path, String key) {
-    final file = File(path);
-    final fileExist = validateFile(file);
+  final String _pathFile;
+  Map<String, dynamic> _dotEnvMap = <String, dynamic>{};
+
+  DotEnvReader({required pathFile}) : _pathFile = pathFile {
+    _loadFile();
+  }
+
+  void _loadFile() {
+    final file = File(_pathFile);
+    final fileExist = _validateFile(file);
     List<String> fileLines;
 
     if (fileExist) {
-      fileLines = readFile(file);
+      fileLines = _readFile(file);
     } else {
       throw Exception('File not found');
     }
 
-    final fileMappedContent = convertFileToMap(fileLines);
-    return fileMappedContent[key];
+    _dotEnvMap = _convertFileToMap(fileLines);
   }
 
-  bool validateFile(File file) {
+  dynamic getEnvValue(String key) {
+    return _dotEnvMap[key];
+  }
+
+  bool _validateFile(File file) {
     final fileExist = file.existsSync();
     return fileExist ? true : false;
   }
 
-  List<String> readFile(File file) {
+  List<String> _readFile(File file) {
     return file.readAsLinesSync();
   }
 
-  Map<String, dynamic> convertFileToMap(List<String> lines) {
+  Map<String, dynamic> _convertFileToMap(List<String> lines) {
     final Map<String, dynamic> envContent = {};
 
     for (int i = 0; i < lines.length; i++) {
@@ -60,13 +76,13 @@ class DotEnvReader {
       final key = splittedLine[0].trim();
       final valueSplit = splittedLine[1].split('#');
       final value = valueSplit[0].trim();
-      envContent[key] = parseValue(value);
+      envContent[key] = _parseValue(value);
     }
 
     return envContent;
   }
 
-  dynamic parseValue(String value) {
+  dynamic _parseValue(String value) {
     if (value == 'true' || value == 'false') {
       return value == 'true' ? true : false;
     }
